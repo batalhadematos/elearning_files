@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:10
+    container_name: db
+    networks:
+      - proxynetwork
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
+    volumes:
+      - angodoo-db-data:/var/lib/postgresql/data
+  angodoo:
+    depends_on:
+      - db
+    image: angodoo/angodoo
+    container_name: angodoo
+    networks:
+      - proxynetwork
+    ports:
+      - '8069:8069'
+      - '8071:8071'
+    volumes:
+      - angodoo-data:/var/lib/odoo
+      - C:/tmp/extra_addons:/mnt/extra-addons
+      - C:/tmp/config:/etc/odoo
+
+volumes:
+  angodoo-data:
+    name: angodoo-data
+  angodoo-db-data:
+    name: angodoo-db-data
+
+networks:
+  proxynetwork:
+    name: my_network
